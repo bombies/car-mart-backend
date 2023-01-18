@@ -1,8 +1,8 @@
-import { Controller, Post, UseGuards, Request } from "@nestjs/common";
+import {Controller, Post, UseGuards, Request, Body, Logger} from "@nestjs/common";
 import { LocalAuthGuard } from "../guards/local-auth.guard";
 import { AuthService } from "./auth.service";
 import { Public } from "../public.decorator";
-import { JwtAuthGuard } from "../guards/jwt-auth.guard";
+import {LocalMasterPasswordAuthGuard} from "../guards/local-master-password-auth.guard";
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +18,13 @@ export class AuthController {
   @Post('logout')
   async logout() {
     return this.authService.logout();
+  }
+
+  @Public()
+  @UseGuards(LocalMasterPasswordAuthGuard)
+  @Post('superuser')
+  async createSuperUser() {
+    return this.authService.createSuperUser();
   }
 
 }

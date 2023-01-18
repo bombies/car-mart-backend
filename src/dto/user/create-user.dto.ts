@@ -1,7 +1,12 @@
+import {AllowedLocation} from "../../users/user.schema";
+
 export class CreateUserDto {
-  user_name: string;
-  user_password: string;
-  user_email: string;
+  username: string;
+  password: string;
+  email: string;
   first_name: string;
   last_name: string;
+  permissions?: number;
+  roles?: string[];
+  allowed_locations?: AllowedLocation[];
 }
