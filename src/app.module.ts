@@ -13,11 +13,26 @@ import {AuthService} from "./auth/route/auth.service";
 import {UsersService} from "./users/users.service";
 import {JwtService} from "@nestjs/jwt";
 import {UsersModule} from "./users/users.module";
+import {MailerModule} from "@nestjs-modules/mailer";
 
 @Module({
   imports: [
       ConfigModule.forRoot({
         isGlobal: true
+      }),
+      MailerModule.forRoot({
+          transport: {
+              service: 'gmail',
+              ignoreTLS: true,
+              secure: false,
+              auth: {
+                  user: process.env.MAILER_USERNAME,
+                  pass: process.env.MAILER_PASSWORD
+              }
+          },
+          defaults: {
+              from: '"No Reply" <no-reply@localhost>'
+          }
       }),
       MongooseModule.forRoot(process.env.MONGODB_HOST),
       AuthModule,

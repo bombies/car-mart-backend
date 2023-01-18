@@ -1,9 +1,8 @@
-import {Body, Controller, Get, Logger, Param, Post, Request, UseGuards} from "@nestjs/common";
+import {Body, Controller, Get, Param, Post, Request} from "@nestjs/common";
 import {UsersService} from "./users.service";
 import {Permissions} from "../utils/permissions/permission.decorator";
 import {Permission} from "../utils/permissions/permission.enum";
 import {CreateUserDto} from "../dto/user/create-user.dto";
-import {JwtAuthGuard} from "../auth/guards/jwt-auth.guard";
 
 @Controller("users")
 export class UsersController {
