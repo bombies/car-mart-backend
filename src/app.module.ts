@@ -15,6 +15,8 @@ import {UsersModule} from "./users/users.module";
 import {MailerModule} from "@nestjs-modules/mailer";
 import {RolesModule} from "./roles/roles.module";
 import {RolesController} from "./roles/roles.controller";
+import {LocationController} from "./location/location.controller";
+import {LocationModule} from "./location/location.module";
 
 @Module({
   imports: [
@@ -38,9 +40,10 @@ import {RolesController} from "./roles/roles.controller";
       MongooseModule.forRoot(process.env.MONGODB_HOST),
       AuthModule,
       UsersModule,
-      RolesModule
+      RolesModule,
+      LocationModule
   ],
-  controllers: [AppController, UsersController, AuthController, RolesController],
+  controllers: [AppController, UsersController, AuthController, RolesController, LocationController],
   providers: [
       AppService,
       AuthService,
