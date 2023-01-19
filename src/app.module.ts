@@ -10,7 +10,6 @@ import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
 import { AuthController } from "./auth/route/auth.controller";
 import {ConfigModule} from "@nestjs/config";
 import {AuthService} from "./auth/route/auth.service";
-import {UsersService} from "./users/users.service";
 import {JwtService} from "@nestjs/jwt";
 import {UsersModule} from "./users/users.module";
 import {MailerModule} from "@nestjs-modules/mailer";
