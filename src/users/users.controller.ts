@@ -18,8 +18,8 @@ export class UsersController {
   }
 
   @Get('@me')
-  getSelf(@Request() req) {
-    return req.user;
+  async getSelf(@Request() req) {
+    return this.usersService.findOne(req.user.id);
   }
 
   @Get(':id')

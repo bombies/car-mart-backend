@@ -52,16 +52,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       username: user.username,
-      email: user.email,
-      id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      permissions: user.permissions,
-      roles: user.roles,
-      allowed_locations: user.allowed_locations,
-      date_of_creation: user.date_of_creation,
     }
-    Logger.log(payload)
 
     return { access_token: this.jwtService.sign(payload, { secret: process.env.API_SECRET_KEY }) }
   }
