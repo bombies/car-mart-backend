@@ -16,7 +16,7 @@ export class AuthService {
   async validateUser(user_name: string, password: string): Promise<any> {
     const user = await this.usersService.findOneByUsername(user_name);
     if (!user)
-      return null;
+      throw new HttpException("There is no such user with that username!", HttpStatus.NOT_FOUND);
 
     const match = await compare(password, user.password);
     if (match) {

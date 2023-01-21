@@ -31,7 +31,7 @@ export class SalesController {
     const user = await this.usersService.findOne(req.user.id);
     const sale = await this.salesService.findOne(id);
     if (!sale)
-      return null;
+      throw new HttpException("There is no such sale with that ID!", HttpStatus.NOT_FOUND);
     if (!LocationController.userHasPermissionToLocation(user, sale.id))
       throw new HttpException('You do not have permission to fetch sales for this location!', HttpStatus.UNAUTHORIZED);
     return sale;
@@ -93,7 +93,7 @@ export class SalesController {
   async deleteSale(@Request() req, @Param('id') id: string) {
     const sale = await this.salesService.findOne(id);
     if (!sale)
-      return null;
+      throw new HttpException("There is no such sale with that ID!", HttpStatus.NOT_FOUND);
 
     const user = await this.usersService.findOne(req.user.id);
     if (LocationController.userHasPermissionToLocation(user, sale.location_id))

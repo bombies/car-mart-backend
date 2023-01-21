@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import {Location, LocationDocument, LocationStore} from "./location.schema";
 import {Model} from "mongoose";
@@ -45,7 +45,7 @@ export class LocationService {
     async update(id: string, updateLocationDto: UpdateLocationDto) {
         const location = await this.findOne(id);
         if (!location)
-            return null;
+            throw new HttpException("There is no such location with that ID!", HttpStatus.NOT_FOUND);
         if (updateLocationDto.name)
             location.name = updateLocationDto.name;
         if (updateLocationDto.stores)
@@ -55,7 +55,7 @@ export class LocationService {
     async createStore(id: string, createStoreDto: CreateStoreDto) {
         const location = await this.findOne(id);
         if (!location)
-            return null;
+            throw new HttpException("There is no such location with that ID!", HttpStatus.NOT_FOUND);
         location.stores = [...location.stores, { id: v4(), name: createStoreDto.name, inventory: [] }];
         return location.save();
     }
@@ -63,21 +63,21 @@ export class LocationService {
     async findStores(loc_id: string) {
         const location = await this.findOne(loc_id);
         if (!location)
-            return null;
+            throw new HttpException("There is no such location with that ID!", HttpStatus.NOT_FOUND);
         return location.stores;
     }
 
     async findStore(loc_id: string, store_id: string) {
         const location = await this.findOne(loc_id);
         if (!location)
-            return null;
+            throw new HttpException("There is no such location with that ID!", HttpStatus.NOT_FOUND);
         return location.stores.find(store => store.id === store_id);
     }
 
     async deleteStore(loc_id: string, store_id: string) {
         const location = await this.findOne(loc_id);
         if (!location)
-            return null;
+            throw new HttpException("There is no such location with that ID!", HttpStatus.NOT_FOUND);
         location.stores = location.stores.filter(store => store.id !== store_id);
         return location.save();
     }
@@ -85,10 +85,10 @@ export class LocationService {
     async updateStore(loc_id: string, store_id: string, updateStoreDto: UpdateStoreDto) {
         const location = await this.findOne(loc_id);
         if (!location)
-            return null;
+            throw new HttpException("There is no such location with that ID!", HttpStatus.NOT_FOUND);
         const store = await this.findStore(location.id, store_id);
         if (!store)
-            return null;
+            throw new HttpException("There is no such store with that ID!", HttpStatus.NOT_FOUND);
         if (updateStoreDto.name)
             store.name = updateStoreDto.name;
         if (updateStoreDto.inventory)
@@ -102,10 +102,10 @@ export class LocationService {
     async createItem(loc_id: string, store_id: string, createItemDto: CreateItemDto) {
         const location = await this.findOne(loc_id);
         if (!location)
-            return null;
+            throw new HttpException("There is no such location with that ID!", HttpStatus.NOT_FOUND);
         const store = await this.findStore(location.id, store_id);
         if (!store)
-            return null;
+            throw new HttpException("There is no such store with that ID!", HttpStatus.NOT_FOUND);
         return this.updateStore(
           loc_id,
           store_id,
@@ -127,17 +127,17 @@ export class LocationService {
     async findItem(loc_id: string, store_id: string, item_id: string) {
         const location = await this.findOne(loc_id);
         if (!location)
-            return null;
+            throw new HttpException("There is no such location with that ID!", HttpStatus.NOT_FOUND);
         const store = await this.findStore(location.id, store_id);
         if (!store)
-            return null;
+            throw new HttpException("There is no such store with that ID!", HttpStatus.NOT_FOUND);
         return store.inventory.find(item => item.id === item_id);
     }
 
     async updateItem(loc_id: string, store_id: string, item_id: string, updateItemDto: UpdateItemDto) {
         const item = await this.findItem(loc_id, store_id, item_id);
         if (!item)
-            return null;
+            throw new HttpException("There is no such item with that ID!", HttpStatus.NOT_FOUND);
         if (updateItemDto.name)
             item.name = updateItemDto.name;
         if (updateItemDto.cost)
@@ -158,10 +158,10 @@ export class LocationService {
     async deleteItem(loc_id: string, store_id: string, item_id: string) {
         const location = await this.findOne(loc_id);
         if (!location)
-            return null;
+            throw new HttpException("There is no such location with that ID!", HttpStatus.NOT_FOUND);
         const store = await this.findStore(location.id, store_id);
         if (!store)
-            return null;
+            throw new HttpException("There is no such store with that ID!", HttpStatus.NOT_FOUND);
         return this.updateStore(
           loc_id,
           store_id,

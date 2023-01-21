@@ -1,4 +1,4 @@
-import {Body, Injectable} from "@nestjs/common";
+import { Body, HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import {Role, RoleDocument} from "./roles.schema";
 import {Model} from "mongoose";
 import {InjectModel} from "@nestjs/mongoose";
@@ -20,7 +20,7 @@ export class RolesService {
     async updateOne(id: string, updateRoleDto: UpdateRoleDto): Promise<Role> {
         const role = await this.findOne(id);
         if (!role)
-            return null;
+            throw new HttpException("There is no such role with that ID!", HttpStatus.NOT_FOUND);
         if (updateRoleDto.name)
             role.name = updateRoleDto.name;
         if (updateRoleDto.permissions)
