@@ -18,6 +18,8 @@ import {RolesController} from "./roles/roles.controller";
 import { SalesModule } from './sales/sales.module';
 import { SalesService } from "./sales/sales.service";
 import { SalesController } from "./sales/sales.controller";
+import { LocationController } from "./location/location.controller";
+import { LocationModule } from "./location/location.module";
 
 @Module({
   imports: [
@@ -42,9 +44,10 @@ import { SalesController } from "./sales/sales.controller";
       AuthModule,
       UsersModule,
       RolesModule,
-      SalesModule
+      SalesModule,
+      LocationModule
   ],
-  controllers: [AppController, UsersController, AuthController, RolesController, SalesController],
+  controllers: [AppController, UsersController, AuthController, RolesController, SalesController, LocationController],
   providers: [
       AppService,
       AuthService,
