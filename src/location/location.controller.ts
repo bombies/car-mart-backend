@@ -99,7 +99,7 @@ export class LocationController {
         @Param('store_id') store_id: string,
         @Body() updateStoreDto: UpdateStoreDto
     ) {
-        await this.checks(req.user, loc_id, store_id);
+        await this.checks(req.user.id, loc_id, store_id);
         return this.locationService.updateStore(loc_id, store_id, updateStoreDto);
     }
 
@@ -110,7 +110,7 @@ export class LocationController {
         @Param('loc_id') loc_id: string,
         @Param('store_id') store_id: string,
     ) {
-        await this.checks(req.user, loc_id, store_id);
+        await this.checks(req.user.id, loc_id, store_id);
         return this.locationService.deleteStore(loc_id, store_id);
     }
 
@@ -122,7 +122,7 @@ export class LocationController {
       @Param('store_id') store_id: string,
       @Body() createItemDto: CreateItemDto
     ) {
-        await this.checks(req.user, loc_id, store_id);
+        await this.checks(req.user.id, loc_id, store_id);
         return this.locationService.createItem(loc_id, store_id, createItemDto);
     }
 
@@ -135,7 +135,7 @@ export class LocationController {
       @Param('item_id') item_id: string,
       @Body() updateItemDto: UpdateItemDto
     ) {
-        await this.checks(req.user, loc_id, store_id);
+        await this.checks(req.user.id, loc_id, store_id);
         return this.locationService.updateItem(loc_id, store_id, item_id, updateItemDto);
     }
 
@@ -147,7 +147,7 @@ export class LocationController {
       @Param('store_id') store_id: string,
       @Param('item_id') item_id: string,
     ) {
-        await this.checks(req.user, loc_id, store_id);
+        await this.checks(req.user.id, loc_id, store_id);
         return this.locationService.deleteItem(loc_id, store_id, item_id);
     }
 
