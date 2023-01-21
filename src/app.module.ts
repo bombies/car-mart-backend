@@ -16,6 +16,8 @@ import {MailerModule} from "@nestjs-modules/mailer";
 import {RolesModule} from "./roles/roles.module";
 import {RolesController} from "./roles/roles.controller";
 import { SalesModule } from './sales/sales.module';
+import { SalesService } from "./sales/sales.service";
+import { SalesController } from "./sales/sales.controller";
 
 @Module({
   imports: [
@@ -42,7 +44,7 @@ import { SalesModule } from './sales/sales.module';
       RolesModule,
       SalesModule
   ],
-  controllers: [AppController, UsersController, AuthController, RolesController],
+  controllers: [AppController, UsersController, AuthController, RolesController, SalesController],
   providers: [
       AppService,
       AuthService,
