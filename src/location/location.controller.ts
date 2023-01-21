@@ -29,7 +29,7 @@ export class LocationController {
     @Get(':id')
     async getLocation(@Request() req, @Param('id') id: string) {
         const user = await this.usersService.findOne(req.user.id);
-        if (!this.userHasPermissionToLocation(user, id))
+        if (!LocationController.userHasPermissionToLocation(user, id))
             throw new HttpException('You do not have permission to fetch this location!', HttpStatus.UNAUTHORIZED);
         return this.locationService.findOne(id);
     }
@@ -58,7 +58,7 @@ export class LocationController {
         const location = await this.locationService.findOne(loc_id);
         if (!location)
             throw new HttpException('There is no such location with that ID!', HttpStatus.NOT_FOUND);
-        if (!this.userHasPermissionToLocation(user, loc_id))
+        if (!LocationController.userHasPermissionToLocation(user, loc_id))
             throw new HttpException('You do not have permission to fetch stores for this location!', HttpStatus.UNAUTHORIZED);
         return this.locationService.findStores(loc_id);
     }
@@ -69,7 +69,7 @@ export class LocationController {
         const location = await this.locationService.findOne(loc_id);
         if (!location)
             throw new HttpException('There is no such location with that ID!', HttpStatus.NOT_FOUND);
-        if (!this.userHasPermissionToLocation(user, loc_id))
+        if (!LocationController.userHasPermissionToLocation(user, loc_id))
             throw new HttpException('You do not have permission to fetch this location!', HttpStatus.UNAUTHORIZED);
         const store = await this.locationService.findStore(loc_id, store_id);
         if (!store)
@@ -84,7 +84,7 @@ export class LocationController {
         const location = await this.locationService.findOne(loc_id);
         if (!location)
             throw new HttpException('There is no such location with that ID!', HttpStatus.NOT_FOUND);
-        if (!this.userHasPermissionToLocation(user, loc_id))
+        if (!LocationController.userHasPermissionToLocation(user, loc_id))
             throw new HttpException('You do not have permission to interact with this location!', HttpStatus.UNAUTHORIZED);
         return this.locationService.createStore(loc_id, createStoreDto);
     }
@@ -101,7 +101,7 @@ export class LocationController {
         const location = await this.locationService.findOne(loc_id);
         if (!location)
             throw new HttpException('There is no such location with that ID!', HttpStatus.NOT_FOUND);
-        if (!this.userHasPermissionToLocation(user, loc_id))
+        if (!LocationController.userHasPermissionToLocation(user, loc_id))
             throw new HttpException('You do not have permission to fetch this location!', HttpStatus.UNAUTHORIZED);
         const store = await this.locationService.findStore(loc_id, store_id);
         if (!store)
@@ -120,7 +120,7 @@ export class LocationController {
         const location = await this.locationService.findOne(loc_id);
         if (!location)
             throw new HttpException('There is no such location with that ID!', HttpStatus.NOT_FOUND);
-        if (!this.userHasPermissionToLocation(user, loc_id))
+        if (!LocationController.userHasPermissionToLocation(user, loc_id))
             throw new HttpException('You do not have permission to fetch this location!', HttpStatus.UNAUTHORIZED);
         const store = await this.locationService.findStore(loc_id, store_id);
         if (!store)
@@ -128,7 +128,7 @@ export class LocationController {
         return this.locationService.deleteStore(loc_id, store_id);
     }
 
-    private userHasPermissionToLocation(user: User, id: string) {
+    public static userHasPermissionToLocation(user: User, id: string) {
         return (!!user.allowed_locations.find(location => location.location_id === id))
         || PermissionGuard.userHasPermission(user.permissions, Permission.INVITE_REPS)
     }
