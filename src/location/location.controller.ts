@@ -1,14 +1,16 @@
-import {Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Request} from "@nestjs/common";
-import {LocationService} from "./location.service";
-import {PermissionGuard} from "../utils/permissions/permission.guard";
-import {Permission} from "../utils/permissions/permission.enum";
-import {UsersService} from "../users/users.service";
-import {Permissions} from "../utils/permissions/permission.decorator";
-import {CreateLocationDto} from "../dto/location/create-location.dto";
-import {UpdateLocationDto} from "../dto/location/update-location.dto";
-import {User} from "../users/user.schema";
-import {CreateStoreDto} from "../dto/location/store/create-store.dto";
-import {UpdateStoreDto} from "../dto/location/store/update-store.dto";
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Request } from "@nestjs/common";
+import { LocationService } from "./location.service";
+import { PermissionGuard } from "../utils/permissions/permission.guard";
+import { Permission } from "../utils/permissions/permission.enum";
+import { UsersService } from "../users/users.service";
+import { Permissions } from "../utils/permissions/permission.decorator";
+import { CreateLocationDto } from "../dto/location/create-location.dto";
+import { UpdateLocationDto } from "../dto/location/update-location.dto";
+import { User } from "../users/user.schema";
+import { CreateStoreDto } from "../dto/location/store/create-store.dto";
+import { UpdateStoreDto } from "../dto/location/store/update-store.dto";
+import { CreateItemDto } from "../dto/location/store/create-item.dto";
+import { UpdateItemDto } from "../dto/location/store/update-item.dto";
 
 @Controller('location')
 export class LocationController {
@@ -97,15 +99,7 @@ export class LocationController {
         @Param('store_id') store_id: string,
         @Body() updateStoreDto: UpdateStoreDto
     ) {
-        const user = await this.usersService.findOne(req.user.id);
-        const location = await this.locationService.findOne(loc_id);
-        if (!location)
-            throw new HttpException('There is no such location with that ID!', HttpStatus.NOT_FOUND);
-        if (!LocationController.userHasPermissionToLocation(user, loc_id))
-            throw new HttpException('You do not have permission to fetch this location!', HttpStatus.UNAUTHORIZED);
-        const store = await this.locationService.findStore(loc_id, store_id);
-        if (!store)
-            throw new HttpException('There is no store with that ID in this location!', HttpStatus.NOT_FOUND);
+        await this.checks(req.user, loc_id, store_id);
         return this.locationService.updateStore(loc_id, store_id, updateStoreDto);
     }
 
@@ -116,7 +110,49 @@ export class LocationController {
         @Param('loc_id') loc_id: string,
         @Param('store_id') store_id: string,
     ) {
-        const user = await this.usersService.findOne(req.user.id);
+        await this.checks(req.user, loc_id, store_id);
+        return this.locationService.deleteStore(loc_id, store_id);
+    }
+
+    @Post(':loc_id/store/:store_id/item')
+    @Permissions(Permission.CONTROL_INVENTORY)
+    async createItem(
+      @Request() req,
+      @Param('loc_id') loc_id: string,
+      @Param('store_id') store_id: string,
+      @Body() createItemDto: CreateItemDto
+    ) {
+        await this.checks(req.user, loc_id, store_id);
+        return this.locationService.createItem(loc_id, store_id, createItemDto);
+    }
+
+    @Patch(':loc_id/store/:store_id/item/:item_id')
+    @Permissions(Permission.CONTROL_INVENTORY)
+    async updateItem(
+      @Request() req,
+      @Param('loc_id') loc_id: string,
+      @Param('store_id') store_id: string,
+      @Param('item_id') item_id: string,
+      @Body() updateItemDto: UpdateItemDto
+    ) {
+        await this.checks(req.user, loc_id, store_id);
+        return this.locationService.updateItem(loc_id, store_id, item_id, updateItemDto);
+    }
+
+    @Delete(':loc_id/store/:store_id/item/:item_id')
+    @Permissions(Permission.CONTROL_INVENTORY)
+    async deleteItem(
+      @Request() req,
+      @Param('loc_id') loc_id: string,
+      @Param('store_id') store_id: string,
+      @Param('item_id') item_id: string,
+    ) {
+        await this.checks(req.user, loc_id, store_id);
+        return this.locationService.deleteItem(loc_id, store_id, item_id);
+    }
+
+    private async checks(user_id: string, loc_id: string, store_id: string) {
+        const user = await this.usersService.findOne(user_id);
         const location = await this.locationService.findOne(loc_id);
         if (!location)
             throw new HttpException('There is no such location with that ID!', HttpStatus.NOT_FOUND);
@@ -125,7 +161,6 @@ export class LocationController {
         const store = await this.locationService.findStore(loc_id, store_id);
         if (!store)
             throw new HttpException('There is no store with that ID in this location!', HttpStatus.NOT_FOUND);
-        return this.locationService.deleteStore(loc_id, store_id);
     }
 
     public static userHasPermissionToLocation(user: User, id: string) {

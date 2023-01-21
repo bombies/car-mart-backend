@@ -6,10 +6,10 @@ export type LocationDocument = HydratedDocument<Location>;
 export type LocationStore = {
     id: string,
     name: string,
-    inventory: StoreItems[],
+    inventory: StoreItem[],
 }
 
-export type StoreItems = {
+export type StoreItem = {
     id: string,
     name: string,
     quantity: number,

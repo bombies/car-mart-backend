@@ -7,6 +7,8 @@ import {v4} from "uuid";
 import {UpdateLocationDto} from "../dto/location/update-location.dto";
 import {CreateStoreDto} from "../dto/location/store/create-store.dto";
 import {UpdateStoreDto} from "../dto/location/store/update-store.dto";
+import { CreateItemDto } from "../dto/location/store/create-item.dto";
+import { UpdateItemDto } from "../dto/location/store/update-item.dto";
 
 @Injectable()
 export class LocationService {
@@ -97,4 +99,75 @@ export class LocationService {
         return location.save();
     }
 
+    async createItem(loc_id: string, store_id: string, createItemDto: CreateItemDto) {
+        const location = await this.findOne(loc_id);
+        if (!location)
+            return null;
+        const store = await this.findStore(location.id, store_id);
+        if (!store)
+            return null;
+        return this.updateStore(
+          loc_id,
+          store_id,
+          {
+              inventory: [
+                ...store.inventory,
+                  {
+                      id: v4(),
+                      name: createItemDto.name,
+                      cost: createItemDto.cost,
+                      quantity: 0,
+                      last_updated: new Date().getTime(),
+                  }
+              ]
+          }
+        )
+    }
+
+    async findItem(loc_id: string, store_id: string, item_id: string) {
+        const location = await this.findOne(loc_id);
+        if (!location)
+            return null;
+        const store = await this.findStore(location.id, store_id);
+        if (!store)
+            return null;
+        return store.inventory.find(item => item.id === item_id);
+    }
+
+    async updateItem(loc_id: string, store_id: string, item_id: string, updateItemDto: UpdateItemDto) {
+        const item = await this.findItem(loc_id, store_id, item_id);
+        if (!item)
+            return null;
+        if (updateItemDto.name)
+            item.name = updateItemDto.name;
+        if (updateItemDto.cost)
+            item.cost = updateItemDto.cost;
+        if (updateItemDto.quantity)
+            item.quantity = updateItemDto.quantity;
+        item.last_updated = new Date().getTime();
+        const store = await this.findStore(loc_id, store_id);
+        return this.updateStore(
+          loc_id,
+          store_id,
+          {
+              inventory: [...store.inventory.filter(item => item.id !== item_id), item]
+          }
+        )
+    }
+
+    async deleteItem(loc_id: string, store_id: string, item_id: string) {
+        const location = await this.findOne(loc_id);
+        if (!location)
+            return null;
+        const store = await this.findStore(location.id, store_id);
+        if (!store)
+            return null;
+        return this.updateStore(
+          loc_id,
+          store_id,
+          {
+              inventory: store.inventory.filter(item => item.id !== item_id)
+          }
+        )
+    }
 }
