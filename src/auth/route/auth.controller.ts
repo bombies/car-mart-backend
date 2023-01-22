@@ -25,11 +25,6 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  @Post('logout')
-  async logout() {
-    return this.authService.logout();
-  }
-
   @Public()
   @UseGuards(LocalMasterPasswordAuthGuard)
   @Post('superuser')

@@ -56,8 +56,4 @@ export class AuthService {
 
     return { access_token: this.jwtService.sign(payload, { secret: process.env.API_SECRET_KEY }) }
   }
-
-  async logout() {
-    return { access_token: this.jwtService.sign('logged out') }
-  }
 }
