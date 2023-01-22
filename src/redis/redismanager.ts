@@ -1,4 +1,4 @@
-import Redis from "ioredis/built/Redis";
+import Redis from "ioredis";
 
 export class RedisManager {
     protected cacheID: string;
@@ -22,6 +22,8 @@ export class RedisManager {
 
     protected async getAll<T>() {
         const keys = await this.keys(`*${this.cacheID}*`)
+        if (keys.length === 0)
+            return [];
         const entries = (await this.mget<T>(keys)).values();
         const ret: T[] = [];
 

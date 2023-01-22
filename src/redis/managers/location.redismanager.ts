@@ -1,7 +1,6 @@
-import Redis from "ioredis/built/Redis";
+import Redis from "ioredis";
 import { RedisManager } from "../redismanager";
-import { Model } from "mongoose";
-import { LocationDocument, Location } from "src/location/location.schema";
+import { Location } from "src/location/location.schema";
 
 export class LocationRedisManager extends RedisManager {
     constructor(redis: Redis) {
