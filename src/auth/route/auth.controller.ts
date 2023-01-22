@@ -8,7 +8,7 @@ import {InviteUserDto} from "../../dto/user/invite-user.dto";
 import {Permission} from "../../utils/permissions/permission.enum";
 import {Permissions} from "../../utils/permissions/permission.decorator";
 import {UsersService} from "../../users/users.service";
-import {v1, v4} from "uuid";
+import {v1} from "uuid";
 
 @Controller('auth')
 export class AuthController {

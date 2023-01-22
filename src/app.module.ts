@@ -10,10 +10,16 @@ import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
 import { AuthController } from "./auth/route/auth.controller";
 import {ConfigModule} from "@nestjs/config";
 import {AuthService} from "./auth/route/auth.service";
-import {UsersService} from "./users/users.service";
 import {JwtService} from "@nestjs/jwt";
 import {UsersModule} from "./users/users.module";
 import {MailerModule} from "@nestjs-modules/mailer";
+import {RolesModule} from "./roles/roles.module";
+import {RolesController} from "./roles/roles.controller";
+import { SalesModule } from './sales/sales.module';
+import { SalesService } from "./sales/sales.service";
+import { SalesController } from "./sales/sales.controller";
+import { LocationController } from "./location/location.controller";
+import { LocationModule } from "./location/location.module";
 
 @Module({
   imports: [
@@ -36,9 +42,12 @@ import {MailerModule} from "@nestjs-modules/mailer";
       }),
       MongooseModule.forRoot(process.env.MONGODB_HOST),
       AuthModule,
-      UsersModule
+      UsersModule,
+      RolesModule,
+      SalesModule,
+      LocationModule
   ],
-  controllers: [AppController, UsersController, AuthController],
+  controllers: [AppController, UsersController, AuthController, RolesController, SalesController, LocationController],
   providers: [
       AppService,
       AuthService,

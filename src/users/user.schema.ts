@@ -34,10 +34,10 @@ export class User {
   @Prop([String])
   roles: string[];
 
-  @Prop()
+  @Prop({ default: 0 })
   permissions: number;
 
-  @Prop()
+  @Prop({ default: [] })
   allowed_locations: AllowedLocation[]
 }
 
