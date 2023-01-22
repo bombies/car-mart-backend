@@ -1,7 +1,7 @@
 import Redis from "ioredis/built/Redis";
 
 export class RedisManager {
-    private cacheID: string;
+    protected cacheID: string;
 
     public constructor(private readonly redis: Redis, cacheID: string) {
         this.cacheID = "car-mart-backend#" + cacheID + "#";
@@ -17,6 +17,24 @@ export class RedisManager {
 
     protected async get<T>(identifier: string): Promise<T> {
         const str = await this.redis.get(this.cacheID + identifier)
+        return JSON.parse(str);
+    }
+
+    protected async mget<T>(identifiers: string[]): Promise<Map<string, T>> {
+        const strArr = await this.redis.mget(identifiers);
+        const retMap = new Map<string, T>();
+        strArr.forEach((str, i) => retMap.set(identifiers[i], JSON.parse(str)))
+        return retMap;
+    }
+
+    protected async keys(filter: string) {
+        return this.redis.keys(filter);
+    }
+
+    protected async getRaw<T>(identifier: string): Promise<T> {
+        console.log(identifier);
+        const str = await this.redis.get(identifier)
+        console.log(str);
         return JSON.parse(str);
     }
 

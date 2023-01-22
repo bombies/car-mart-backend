@@ -21,7 +21,7 @@ export class LocationService {
         @InjectModel(Location.name) private locationModel: Model<LocationDocument>,
         @InjectRedis() private readonly redis: Redis
     ) {
-        this.redisManager = new LocationRedisManager(redis, locationModel);
+        this.redisManager = new LocationRedisManager(redis);
     }
 
     async create(createLocationDto: CreateLocationDto) {
@@ -39,7 +39,22 @@ export class LocationService {
     }
 
     async findMany(ids: string[]) {
-        return this.locationModel.find({ id: ids }).exec()
+        const prelimLocs = await this.redisManager.findMany(ids);
+        const locsToFind: string[] = [];
+        const validLocs: Location[] = [];
+        prelimLocs.forEach((loc, key) => {
+            if (!loc)
+                locsToFind.push(key)
+            else validLocs.push(loc);
+        });
+        
+        const dbFetchedLocs = await this.locationModel.find({ id: {
+                $in: locsToFind
+            }
+        }).exec();
+
+        dbFetchedLocs.forEach(loc => validLocs.push(loc));
+        return validLocs;
     }
 
     async findOne(id: string) {

@@ -4,8 +4,8 @@ import { Model } from "mongoose";
 import { LocationDocument, Location } from "src/location/location.schema";
 
 export class LocationRedisManager extends RedisManager {
-    constructor(redis: Redis, private readonly locationModel: Model<LocationDocument>) {
-        super(redis, locationModel.name)
+    constructor(redis: Redis) {
+        super(redis, "location")
     }
 
     /**
@@ -27,11 +27,28 @@ export class LocationRedisManager extends RedisManager {
      * ```
      */
     public async findAll() {
-        return this.get<Location[]>("*carmart-backend-location*")
+        const keys = await this.keys(`*${this.cacheID}*`)
+        const entries = (await this.mget<Location>(keys)).values();
+        const ret: Location[] = [];
+
+        let currentEntry = entries.next();
+        while (currentEntry.value) {
+            ret.push(currentEntry.value);
+            currentEntry = entries.next();
+        }
+
+        return ret;
     }
 
     public async findOne(id: string) {
         return this.get<Location>(id);
+    }
+
+    public async findMany(ids: string[]) {
+        const results = await this.mget<Location>(ids);
+        const retMap = new Map<string, Location>();
+        results.forEach((result, n) => retMap.set(ids[n], result));
+        return retMap;
     }
 
     public async putOne(location: Location) {
