@@ -27,7 +27,7 @@ export class LocationService {
     }
 
     async findMany(ids: string[]) {
-        return this.locationModel.find({ id: ids }).exec()
+        return this.locationModel.find({ id: { $in: ids } }).exec()
     }
 
     async findOne(id: string) {
