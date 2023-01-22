@@ -4,7 +4,7 @@ export class RedisManager {
     private cacheID: string;
 
     public constructor(private readonly redis: Redis, cacheID: string) {
-        this.cacheID = cacheID + "#";
+        this.cacheID = "car-mart-backend#" + cacheID + "#";
     }
 
     protected async setex(identifier: string, value: Object | any[], seconds: number) {

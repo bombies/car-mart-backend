@@ -27,7 +27,7 @@ import { Logger } from "@nestjs/common/services";
         RedisModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
-            useFactory:async (configService: ConfigService) => {
+            useFactory: async (configService: ConfigService) => {
                 return {
                     config: {
                         host: configService.get("REDIS_HOST"),
