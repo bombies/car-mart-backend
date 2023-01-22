@@ -27,17 +27,7 @@ export class LocationRedisManager extends RedisManager {
      * ```
      */
     public async findAll() {
-        const keys = await this.keys(`*${this.cacheID}*`)
-        const entries = (await this.mget<Location>(keys)).values();
-        const ret: Location[] = [];
-
-        let currentEntry = entries.next();
-        while (currentEntry.value) {
-            ret.push(currentEntry.value);
-            currentEntry = entries.next();
-        }
-
-        return ret;
+        return this.getAll<Location>();
     }
 
     public async findOne(id: string) {
@@ -45,10 +35,7 @@ export class LocationRedisManager extends RedisManager {
     }
 
     public async findMany(ids: string[]) {
-        const results = await this.mget<Location>(ids);
-        const retMap = new Map<string, Location>();
-        results.forEach((result, n) => retMap.set(ids[n], result));
-        return retMap;
+        return await this.mget<Location>(ids);
     }
 
     public async putOne(location: Location) {

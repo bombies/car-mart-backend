@@ -20,6 +20,20 @@ export class RedisManager {
         return JSON.parse(str);
     }
 
+    protected async getAll<T>() {
+        const keys = await this.keys(`*${this.cacheID}*`)
+        const entries = (await this.mget<T>(keys)).values();
+        const ret: T[] = [];
+
+        let currentEntry = entries.next();
+        while (currentEntry.value) {
+            ret.push(currentEntry.value);
+            currentEntry = entries.next();
+        }
+
+        return ret;
+    }
+
     protected async mget<T>(identifiers: string[]): Promise<Map<string, T>> {
         const strArr = await this.redis.mget(identifiers);
         const retMap = new Map<string, T>();
