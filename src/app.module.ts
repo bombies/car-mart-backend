@@ -20,14 +20,20 @@ import { SalesController } from "./sales/sales.controller";
 import { LocationController } from "./location/location.controller";
 import { LocationModule } from "./location/location.module";
 import { RedisModule } from "@liaoliaots/nestjs-redis";
+import { Logger } from "@nestjs/common/services";
 
 @Module({
     imports: [
         RedisModule.forRoot({
             config: {
-                host: process.env.REDIS_HOST,
-                port: Number(process.env.REDIS_PORT),
+                host: "localhost",
+                port: 6379,
                 password: process.env.REDIS_PASSWORD,
+                onClientCreated(client) {
+                    client.on('ready', () => {
+                        Logger.log("Redis is ready to be used!")
+                    })
+                }
             },
         }),
         ConfigModule.forRoot({
