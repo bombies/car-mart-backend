@@ -41,7 +41,7 @@ export class UsersService {
   async updateOne(user_id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(user_id);
     if (!user)
-      return null;
+      throw new HttpException("There is no such user with that ID!", HttpStatus.NOT_FOUND);
     if (updateUserDto.username) {
       const existingUser = await this.findOneByUsername(updateUserDto.username);
       if (existingUser)
