@@ -75,7 +75,7 @@ export class LocationService {
     }
 
     async update(id: string, updateLocationDto: UpdateLocationDto) {
-        let location: Location = await this.rawFindLocation(id);
+        const location: Location = await this.rawFindLocation(id);
         return this.rawUpdateLocation(location, updateLocationDto);
     }
 
